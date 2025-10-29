@@ -6,18 +6,19 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/14 15:06:44 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/29 17:20:50 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/10/29 18:08:31 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+#include <stdio.h>
 
-
-
-int	main(int argc, char **argv)
+int	main()
 {
-	if(argc != 1)
-		ft_printf("Error\n");
-		return ;
-	ft_printf("PID: %p", getpid());
+	printf("PID: %d\n", getpid());
+	while(/*signal != 0*/)
+	{
+		pause();
+	}
+	
 }

@@ -6,7 +6,7 @@
 #    By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/14 15:04:20 by ccavalca          #+#    #+#              #
-#    Updated: 2025/10/29 17:17:55 by ccavalca         ###   ########.fr        #
+#    Updated: 2025/10/29 18:00:37 by ccavalca         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME_C = client
 NAME_BONUS = $(NAME)_bonus
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I./includes -I./Libft -I./ft_printf -I./minilibx
+CFLAGS = -Wall -Wextra -Werror -g -I -I./Libft -I./ft_printf
 
 LIBFT_DIR = Libft
 PRINTF_DIR = ft_printf
