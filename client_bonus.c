@@ -1,36 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minitalk.h                                         :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/30 00:04:35 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/30 02:32:29 by ccavalca         ###   ########.fr       */
+/*   Created: 2025/10/30 00:04:13 by ccavalca          #+#    #+#             */
+/*   Updated: 2025/10/30 00:09:50 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINITALK_H
-# define MINITALK_H
-
-# include <signal.h>
-# include <unistd.h>
-
-# define MAX_CLIENTS 256
-
-// Structs
-typedef struct s_client_state
+static void	ack_handler(int signal)
 {
-    __pid_t         pid;
-    unsigned char   current_char;
-    int             bit;
-}   t_client_state;
-
-// Libraries
-int	ft_printf(const char *print, ...);
-
-// Signal handlers
-
-
-#endif
-
+	(void)signal;
+	g_ack_received = 1;
+}

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+         #
+#    By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/09/14 15:04:20 by ccavalca          #+#    #+#              #
-#    Updated: 2025/10/29 18:00:37 by ccavalca         ###   ########.fr        #
+#    Created: 2025/10/30 00:04:28 by ccavalca          #+#    #+#              #
+#    Updated: 2025/10/30 00:04:30 by ccavalca         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
