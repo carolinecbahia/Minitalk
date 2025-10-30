@@ -3,39 +3,46 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 00:04:28 by ccavalca          #+#    #+#              #
-#    Updated: 2025/10/30 00:04:30 by ccavalca         ###   ########.fr        #
+#    Updated: 2025/10/30 17:03:17 by ccavalca         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME_S = server
 NAME_C = client
-NAME_BONUS = $(NAME)_bonus
-
+NAME_S_BONUS = $(NAME_S)_bonus
+NAME_C_BONUS = $(NAME_C)_bonus
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I -I./Libft -I./ft_printf
+CFLAGS = -Wall -Wextra -Werror -g -I./Libft -I./ft_printf -llibft -llibftprintf
 
-LIBFT_DIR = Libft
-PRINTF_DIR = ft_printf
-BONUS_DIR = bonus
+LIBFT_DIR = Libft/
+PRINTF_DIR = ft_printf/
 
-MANDATORY_SRCS = 	server.c \
-					client.c \
+SERVER_SRC =	server.c \
+
+CLIENT_SRC =	client.c \
 					
-BONUS_SRCS = 	$(wildcard $(BONUS_DIR)/*.c)
+SERVER_BONUS_SRCS =		server_bonus.c \
 
-MANDATORY_OBJS = $(MANDATORY_SRCS:.c=.o)
-BONUS_OBJS = $(BONUS_SRCS:.c=.o)
+CLIENT_BONUS_SRCS =		client_bonus.c \
+
+SERVER_OBJS = $(SERVER_SRC:.c=.o)
+CLIENT_OBJS = $(CLIENT_SRC:.c=.o)
+SERVER_BONUS_OBJS = $(SERVER_BONUS_SRCS:.c=.o)
+CLIENT_BONUS_OBJS = $(CLIENT_BONUS_SRCS:.c=.o)
 
 LIBFT_A = $(LIBFT_DIR)/libft.a
 PRINTF_A = $(PRINTF_DIR)/libftprintf.a
 
-all: $(NAME)
+all: $(NAME_S) $(NAME_C)
 
-$(NAME): $(LIBFT_A) $(PRINTF_A) $(MANDATORY_OBJS)
-	$(CC) $(CFLAGS) $(MANDATORY_OBJS) $(LIBFT_A) $(PRINTF_A) -o $(NAME)
+$(NAME_S): $(LIBFT_A) $(PRINTF_A) $(SERVER_OBJS)
+	$(CC) $(CFLAGS) $(SERVER_OBJS) $(LIBFT_A) $(PRINTF_A) -o $(NAME_S)
+
+$(NAME_C): $(LIBFT_A) $(PRINTF_A) $(CLIENT_OBJS)
+	$(CC) $(CFLAGS) $(CLIENT_OBJS) $(LIBFT_A) $(PRINTF_A) -o $(NAME_C)
 
 $(LIBFT_A):
 	make -C $(LIBFT_DIR)
@@ -43,20 +50,23 @@ $(LIBFT_A):
 $(PRINTF_A):
 	make -C $(PRINTF_DIR)
 
-bonus: $(NAME_BONUS)
+bonus: $(NAME_S_BONUS) $(NAME_C_BONUS)
 
-$(NAME)_bonus: $(PRINTF_A) $(BONUS_OBJS) $(LIBFT_A) $(MANDATORY_OBJS)
-	$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT_A) $(PRINTF_A) $(MANDATORY_OBJS) -o $(NAME_BONUS)
+$(NAME_S_BONUS): $(PRINTF_A) $(LIBFT_A) $(SERVER_BONUS_OBJS)
+	$(CC) $(CFLAGS) $(SERVER_BONUS_OBJS) $(LIBFT_A) $(PRINTF_A) -o $(NAME_S_BONUS)
+
+$(NAME_C_BONUS): $(PRINTF_A) $(LIBFT_A) $(CLIENT_BONUS_OBJS)
+	$(CC) $(CFLAGS) $(CLIENT_BONUS_OBJS) $(LIBFT_A) $(PRINTF_A) -o $(NAME_C_BONUS)
 
 re: fclean all
 
 clean:
-	rm -f $(MANDATORY_OBJS) $(BONUS_OBJS)
+	rm -f $(SERVER_OBJS) $(CLIENT_OBJS) $(SERVER_BONUS_OBJS) $(CLIENT_BONUS_OBJS)
 	make clean -C $(LIBFT_DIR)
 	make clean -C $(PRINTF_DIR)
 
 fclean: clean
-	rm -f $(NAME) $(NAME_BONUS)
+	rm -f $(NAME_S) $(NAME_C) $(NAME_S_BONUS) $(NAME_C_BONUS)
 	make fclean -C $(LIBFT_DIR)
 	make fclean -C $(PRINTF_DIR)
 
