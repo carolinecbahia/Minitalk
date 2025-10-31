@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:21 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/30 17:13:01 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/10/31 01:30:26 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static void	client_action(char *msg, pid_t server_pid)
 			sigsuspend(&oldmask);
 		midx++;
 	}
+	send_char_bits(server_pid, '\n');
 	g_ack_received = 0;
 	while (!g_ack_received)
 		sigsuspend(&oldmask);
@@ -82,6 +83,5 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	client_action(argv[2], server_pid);
-	send_char_bits(server_pid, '\n');
 	return (0);
 }

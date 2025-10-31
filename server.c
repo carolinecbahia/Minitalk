@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:03:44 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/30 15:12:58 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/10/31 01:17:28 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	signal_action(void)
 
 int	main(void)
 {	
-	printf("PID: %d\n", getpid());
+	ft_printf("PID: %d\n", getpid());
 	signal_action();
 	while (1)
 		pause();
