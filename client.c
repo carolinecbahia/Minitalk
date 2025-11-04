@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:21 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/31 01:30:26 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:57:47 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,20 @@ static void	ack_handler(int signal)
 	g_ack_received = 1;
 }
 
-static void	send_char_bits(pid_t server_pid, unsigned char c)
+void	send_byte_and_wait(pid_t server_pid, unsigned char c, sigset_t *oldmask)
 {
-	unsigned int	bidx;
+		unsigned int bidx;
 
-	bidx = 0;
-	while (bidx < 8)
-	{
-		if ((c >> bidx) & 1)
-			kill(server_pid, SIGUSR2);
-		else
-			kill(server_pid, SIGUSR1);
-		bidx++;
-	}
+		bidx = 0;
+		while (bidx < 8)
+		{
+			g_ack_received = 0;
+			if ((c >> bidx) & 1)
+				kill(server_pid, SIGUSR1);
+			while (!g_ack_received)
+				sigsuspend(&*oldmask);
+			bidx++;
+		}
 }
 
 static void	client_action(char *msg, pid_t server_pid)
@@ -42,7 +43,6 @@ static void	client_action(char *msg, pid_t server_pid)
 	sigset_t			oldmask;
 	int					midx;
 
-	ft_bzero(&sa, sizeof(sa));
 	sa.sa_handler = ack_handler;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
@@ -53,16 +53,10 @@ static void	client_action(char *msg, pid_t server_pid)
 	midx = 0;
 	while (msg[midx])
 	{
-		g_ack_received = 0;
-		send_char_bits(server_pid, msg[midx]);
-		while (!g_ack_received)
-			sigsuspend(&oldmask);
+		send_byte_and_wait(server_pid, msg[midx], &oldmask);
 		midx++;
 	}
-	send_char_bits(server_pid, '\n');
-	g_ack_received = 0;
-	while (!g_ack_received)
-		sigsuspend(&oldmask);
+	send_byte_and_wait(server_pid, '\0', &oldmask);
 	sigprocmask(SIG_SETMASK, &oldmask, NULL);
 }
 

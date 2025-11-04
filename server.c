@@ -1,3 +1,5 @@
+/* pipe used to transfer completed bytes from signal handler to main loop */
+static int		g_pipefd[2] = {-1, -1};
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,30 +8,30 @@
 /*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:03:44 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/31 01:17:28 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/03 00:29:54 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static t_client_state	g_clients[MAX_CLIENTS];
-
 static int	find_or_create_client(pid_t pid)
 {
 	int	i;
+	t_client_state	client;
 
+	client.pid = 0;
 	if (pid <= 0)
 		return (-1);
 	i = 0;
 	while (i < MAX_CLIENTS)
 	{
-		if (g_clients[i].pid == pid)
+		if (client.pid == pid)
 			return (i);
-		if (g_clients[i].pid == 0)
+		if (client.pid == 0)
 		{
-			g_clients[i].pid = pid;
-			g_clients[i].current_char = 0;
-			g_clients[i].bit = 0;
+			client.pid = pid;
+			client.current_char = 0;
+			client.bit = 0;
 			return (i);
 		}
 		i++;
@@ -39,25 +41,30 @@ static int	find_or_create_client(pid_t pid)
 
 static void	signal_handler(int signal, siginfo_t *info, void *ucontext)
 {
-	int		i;
-	pid_t	sender;
+	int				i;
+	t_client_state	client;
 
+	client.pid = 0;
+	find_or_create_client(client.pid);
 	(void)ucontext;
 	if (!info)
 		return ;
-	sender = info->si_pid;
-	i = find_or_create_client(sender);
+	client.pid = info->si_pid;
+	i = find_or_create_client(client.pid);
 	if (i < 0)
 		return ;
-	if (signal == SIGUSR2)
-		g_clients[i].current_char |= (1 << g_clients[i].bit);
-	g_clients[i].bit++;
-	if (g_clients[i].bit == 8)
+	if (signal == SIGUSR1)
+		client.current_char |= (1 << client.bit);
+	client.bit++;
+	kill(client.pid, SIGUSR1);
+	if (client.bit == 8)
 	{
-		write (1, &g_clients[i].current_char, 1);
-		g_clients[i].current_char = 0;
-		g_clients[i].bit = 0;
-		kill(sender, SIGUSR1);
+		if (client.current_char == '\0')
+			write(1, "\n", 1);
+		else
+			write(1, &client.current_char, 1);
+		client.current_char = 0;
+		client.bit = 0;
 	}
 }
 
@@ -75,9 +82,14 @@ static void	signal_action(void)
 
 int	main(void)
 {	
+	char	c;
+
 	ft_printf("PID: %d\n", getpid());
 	signal_action();
 	while (1)
-		pause();
+	{
+		if (read(g_pipefd[0], &c, 1) == 1)
+			write(1, &c, 1);
+	}
 	return (0);
 }
