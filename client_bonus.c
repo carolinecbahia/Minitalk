@@ -3,15 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:13 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/10/30 00:09:50 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/14 16:27:23 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-static void	ack_handler(int signal)
-{
-	(void)signal;
-	g_ack_received = 1;
-}
+#include "minitalk.h"
+

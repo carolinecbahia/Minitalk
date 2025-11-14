@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:21 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/04 15:57:47 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/14 17:46:57 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,20 @@ static void	ack_handler(int signal)
 
 void	send_byte_and_wait(pid_t server_pid, unsigned char c, sigset_t *oldmask)
 {
-		unsigned int bidx;
+	int	bidx;
 
-		bidx = 0;
-		while (bidx < 8)
-		{
-			g_ack_received = 0;
-			if ((c >> bidx) & 1)
-				kill(server_pid, SIGUSR1);
-			while (!g_ack_received)
-				sigsuspend(&*oldmask);
-			bidx++;
-		}
+	bidx = 7;
+	while (bidx >= 0)
+	{
+		g_ack_received = 0;
+		if ((c >> bidx) & 1)
+			kill(server_pid, SIGUSR1);
+		else
+			kill(server_pid, SIGUSR2);
+		while (!g_ack_received)
+			sigsuspend(oldmask);
+		bidx--;
+	}
 }
 
 static void	client_action(char *msg, pid_t server_pid)
@@ -69,11 +71,10 @@ int	main(int argc, char **argv)
 		ft_printf("Error.\nCheck the arguments\n ");
 		return (1);
 	}
-	if (argv[1])
-		server_pid = ft_atoi(argv[1]);
-	else
+	server_pid = ft_atoi(argv[1]);
+	if (server_pid <= 0)
 	{
-		ft_printf("Error.\nCheck the arguments\n");
+		ft_printf("Error: Invalid Server PID.\n");
 		return (1);
 	}
 	client_action(argv[2], server_pid);
