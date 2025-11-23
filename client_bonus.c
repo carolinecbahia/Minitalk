@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:13 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/21 16:48:08 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:04:45 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,14 @@ static void	ack_handler(int signal)
 	g_ack_received = 1;
 }
 
-void	send_byte_and_wait(pid_t server_pid, unsigned char c, sigset_t *oldmask)
+static void	end_handler(int signal)
+{
+	(void)signal;
+	ft_printf("\nSucess: Server checked message receive!\n");
+	exit(0);
+}
+
+void	send_byte_and_wait(pid_t server_pid, unsigned char c)
 {
 	int	bidx;
 
@@ -29,45 +36,45 @@ void	send_byte_and_wait(pid_t server_pid, unsigned char c, sigset_t *oldmask)
 	{
 		g_ack_received = 0;
 		if ((c >> bidx) & 1)
-			kill(server_pid, SIGUSR1);
+		{
+			if (kill(server_pid, SIGUSR1) == -1)
+			{
+				ft_printf("Error: invalid PID\n");
+				exit(1);
+			}
+		}	
 		else
-			kill(server_pid, SIGUSR2);
+		{
+			if (kill(server_pid, SIGUSR2) == -1)
+			{
+				ft_printf("Error: invalid PID\n");
+				exit(1);
+			}
+		}
 		while (!g_ack_received)
-			sigsuspend(oldmask);
+			pause();
 		bidx--;
 	}
-}
-
-static void	end_handler(int signal)
-{
-	(void)signal;
-	ft_printf("\nSucesso: O servidor confirmou o recebimento da mensagem!\n");
-	exit(0);
 }
 
 static void	client_action(char *msg, pid_t server_pid)
 {
 	struct sigaction	sa_ack;
-	struct sigaction	sa_end;
-	sigset_t			oldmask;
 	int					midx;
 
-	sa_ack.sa_handler = ack_handler;
-	sa_ack.sa_flags = 0;
 	sigemptyset(&sa_ack.sa_mask);
+	sa_ack.sa_flags = 0;
+	sa_ack.sa_handler = ack_handler;
 	sigaction(SIGUSR1, &sa_ack, NULL);
 	sa_end.sa_handler = end_handler;
-	sa_end.sa_flags = 0;
-	sigemptyset(&sa_end.sa_mask);
-	sigaction(SIGUSR1, &sa_end, NULL);
+	sigaction(SIGUSR2, &sa_end, NULL);
 	midx = 0;
 	while (msg[midx])
 	{
-		send_byte_and_wait(server_pid, msg[midx], &oldmask);
+		send_byte_and_wait(server_pid, msg[midx]);
 		midx++;
 	}
-	send_byte_and_wait(server_pid, '\0', &oldmask);
-	sigprocmask(SIG_SETMASK, &oldmask, NULL);
+	send_byte_and_wait(server_pid, '\0');
 }
 
 int	main(int argc, char **argv)

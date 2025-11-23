@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ccavalca <ccavalca@student.42sp.org.br>    +#+  +:+       +#+         #
+#    By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/30 00:04:28 by ccavalca          #+#    #+#              #
-#    Updated: 2025/10/31 01:12:29 by ccavalca         ###   ########.fr        #
+#    Updated: 2025/11/23 12:54:59 by ccavalca         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME_C = client
 NAME_S_BONUS = $(NAME_S)_bonus
 NAME_C_BONUS = $(NAME_C)_bonus
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I./Libft -I./ft_printf
+CFLAGS = -Wall -Wextra -Werror -I./Libft -I./ft_printf
 
 LIBFT_DIR = Libft/
 PRINTF_DIR = ft_printf/

@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:00 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/21 17:05:10 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:58:13 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,27 @@ static int	find_or_create_client(pid_t pid)
 	return (-1);
 }
 
+static void	handle_byte(t_client_state *client, pid_t sender)
+{
+	if (client->bit == 8)
+	{
+		if (client->current_char == '\0')
+		{
+			write(1, "\n", 1);
+			kill(sender, SIGUSR2);
+		}
+		else
+		{
+			write(1, &client->current_char, 1);
+			kill(sender, SIGUSR1);
+		}
+		client->current_char = 0;
+		client->bit = 0;
+	}
+	else
+		kill(sender, SIGUSR1);
+}
+
 static void	signal_handler(int signal, siginfo_t *info, void *ucontext)
 {
 	int		i;
@@ -52,18 +73,7 @@ static void	signal_handler(int signal, siginfo_t *info, void *ucontext)
 	g_clients[i].current_char = ((unsigned char)
 			(g_clients[i].current_char << 1) | (signal == SIGUSR1));
 	g_clients[i].bit++;
-	if (g_clients[i].bit == 8)
-	{
-		if (g_clients[i].current_char == '\0')
-		{
-			write(1, "\n", 1);
-			kill(sender, SIGUSR2);
-		}
-		g_clients[i].current_char = 0;
-		g_clients[i].bit = 0;
-	}
-	else
-		kill(sender, SIGUSR1);
+	handle_byte(&g_clients[i], sender);
 }
 
 static void	signal_action(void)
