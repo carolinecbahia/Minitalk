@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:00 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/23 11:58:13 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:21:35 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ static void	signal_action(void)
 
 int	main(void)
 {
-
 	ft_bzero(g_clients, sizeof(t_client_state) * MAX_CLIENTS);
 	ft_printf("PID: %d\n", getpid());
 	signal_action();

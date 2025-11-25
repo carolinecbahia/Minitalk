@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:03:44 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/23 12:17:46 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:41:53 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ static void	signal_handler(int signal, siginfo_t *info, void *ucontext)
 	g_clients[i].current_char = ((unsigned char)
 			(g_clients[i].current_char << 1) | (signal == SIGUSR1));
 	g_clients[i].bit++;
-	kill(sender, SIGUSR1);
 	if (g_clients[i].bit == 8)
 	{
 		if (g_clients[i].current_char == '\0')
@@ -62,6 +61,7 @@ static void	signal_handler(int signal, siginfo_t *info, void *ucontext)
 		g_clients[i].current_char = 0;
 		g_clients[i].bit = 0;
 	}
+	kill(sender, SIGUSR1);
 }
 
 static void	signal_action(void)
@@ -79,7 +79,6 @@ static void	signal_action(void)
 
 int	main(void)
 {
-
 	ft_bzero(g_clients, sizeof(t_client_state) * MAX_CLIENTS);
 	ft_printf("PID: %d\n", getpid());
 	signal_action();

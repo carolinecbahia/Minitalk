@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:13 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/23 14:04:45 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/25 14:49:57 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,34 +22,31 @@ static void	ack_handler(int signal)
 
 static void	end_handler(int signal)
 {
+	char	*msg;
+
+	msg = "\nSuccess: server checked message receive!\n";
 	(void)signal;
-	ft_printf("\nSucess: Server checked message receive!\n");
+	write(1, &msg, sizeof(msg) - 1);
 	exit(0);
 }
 
 void	send_byte_and_wait(pid_t server_pid, unsigned char c)
 {
 	int	bidx;
+	int	signal;
 
 	bidx = 7;
 	while (bidx >= 0)
 	{
 		g_ack_received = 0;
 		if ((c >> bidx) & 1)
-		{
-			if (kill(server_pid, SIGUSR1) == -1)
-			{
-				ft_printf("Error: invalid PID\n");
-				exit(1);
-			}
-		}	
+			signal = SIGUSR1;
 		else
+			signal = SIGUSR2;
+		if (kill(server_pid, signal) == -1)
 		{
-			if (kill(server_pid, SIGUSR2) == -1)
-			{
-				ft_printf("Error: invalid PID\n");
-				exit(1);
-			}
+			ft_printf("Error: Invalid PID\n");
+			exit(1);
 		}
 		while (!g_ack_received)
 			pause();
@@ -59,15 +56,15 @@ void	send_byte_and_wait(pid_t server_pid, unsigned char c)
 
 static void	client_action(char *msg, pid_t server_pid)
 {
-	struct sigaction	sa_ack;
+	struct sigaction	sa;
 	int					midx;
 
-	sigemptyset(&sa_ack.sa_mask);
-	sa_ack.sa_flags = 0;
-	sa_ack.sa_handler = ack_handler;
-	sigaction(SIGUSR1, &sa_ack, NULL);
-	sa_end.sa_handler = end_handler;
-	sigaction(SIGUSR2, &sa_end, NULL);
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sa.sa_handler = ack_handler;
+	sigaction(SIGUSR1, &sa, NULL);
+	sa.sa_handler = end_handler;
+	sigaction(SIGUSR2, &sa, NULL);
 	midx = 0;
 	while (msg[midx])
 	{

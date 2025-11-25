@@ -6,7 +6,7 @@
 /*   By: ccavalca <ccavalca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:04:21 by ccavalca          #+#    #+#             */
-/*   Updated: 2025/11/23 14:10:15 by ccavalca         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:32:18 by ccavalca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,20 @@ static void	ack_handler(int signal)
 void	send_byte_and_wait(pid_t server_pid, unsigned char c)
 {
 	int	bidx;
-	int signal;
+	int	signal;
 
 	bidx = 7;
 	while (bidx >= 0)
 	{
 		g_ack_received = 0;
 		if ((c >> bidx) & 1)
+			signal = SIGUSR1;
+		else
+			signal = SIGUSR2;
+		if (kill(server_pid, signal) == -1)
 		{
-			if ((c >> bidx) & 1)
-				signal = SIGUSR1;
-			else
-				signal = SIGUSR2;
-			if (kill(server_pid, signal) == -1)
-			{
-				ft_printf("Error: Invalid PID\n");
-				exit(1);
-			}
+			ft_printf("Error: Invalid PID\n");
+			exit(1);
 		}
 		while (!g_ack_received)
 			pause();
